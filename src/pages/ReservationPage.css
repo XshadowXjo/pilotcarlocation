@@ -1,0 +1,133 @@
+:root{
+  --bg:#161616;
+  --bg-alt:#1f1f1f;
+  --card:#232323;
+  --card-border:#333333;
+  --lime:#d7ff2b;
+  --lime-dim:#a8cc1f;
+  --text:#f2f2f2;
+  --text-dim:#9a9a9a;
+  --danger:#ff5b5b;
+}
+
+.reservation-page{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Segoe UI', Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.reservation-page h1,
+.reservation-page h2,
+.reservation-page h3,
+.reservation-page .brand,
+.reservation-page .nav a,
+.reservation-page .btn,
+.reservation-page .tag{font-family:'Segoe UI', Arial, sans-serif;font-weight:800;text-transform:uppercase;}
+
+/* ---- hero strip ---- */
+.reservation-page .strip{padding:36px 48px 0;max-width:1240px;margin:0 auto;}
+.reservation-page .breadcrumb{color:var(--text-dim);font-size:13px;margin-bottom:10px;}
+.reservation-page .breadcrumb b{color:var(--lime);font-weight:600;}
+.reservation-page h1.page-title{font-size:38px;font-weight:700;letter-spacing:1px;color:var(--text);}
+.reservation-page h1.page-title span{color:var(--lime);}
+.reservation-page .subtitle{color:var(--text-dim);font-size:14px;margin-top:6px;font-family:'Segoe UI', Arial, sans-serif;text-transform:none;}
+
+/* ---- layout ---- */
+.reservation-page .layout{
+  max-width:1240px;margin:32px auto 80px;padding:0 48px;
+  display:grid;grid-template-columns:1fr 380px;gap:28px;
+}
+@media(max-width:980px){.reservation-page .layout{grid-template-columns:1fr;}}
+
+.reservation-page .card{
+  background:var(--card);border:1px solid var(--card-border);border-radius:10px;
+  padding:28px;margin-bottom:24px;
+}
+.reservation-page .card h2{
+  font-size:15px;color:var(--lime);letter-spacing:1.5px;font-weight:600;
+  margin-bottom:20px;display:flex;align-items:center;gap:10px;
+}
+.reservation-page .card h2 .num{
+  background:var(--lime);color:#111;width:24px;height:24px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;
+}
+
+/* ---- form ---- */
+.reservation-page .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.reservation-page .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+@media(max-width:600px){.reservation-page .grid2,.reservation-page .grid3{grid-template-columns:1fr;}}
+.reservation-page .field{margin-bottom:16px;}
+.reservation-page .field label{
+  display:block;font-size:12px;color:var(--text-dim);margin-bottom:6px;
+  letter-spacing:0.4px;font-weight:500;
+}
+.reservation-page .field label .req{color:var(--lime);}
+.reservation-page .field input,.reservation-page .field select{
+  width:100%;background:#181818;border:1px solid var(--card-border);
+  color:var(--text);padding:12px 14px;border-radius:6px;font-size:14px;
+  font-family:'Segoe UI', Arial, sans-serif;transition:border-color .2s;
+}
+.reservation-page .field input:focus,.reservation-page .field select:focus{outline:none;border-color:var(--lime);}
+.reservation-page .field input::placeholder{color:#666;}
+
+/* ---- upload dropzones ---- */
+.reservation-page .upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:600px){.reservation-page .upload-grid{grid-template-columns:1fr;}}
+.reservation-page .dropzone{
+  border:1.5px dashed var(--card-border);border-radius:8px;
+  padding:22px 16px;text-align:center;cursor:pointer;
+  transition:border-color .2s,background .2s;position:relative;
+  background:#1a1a1a;
+}
+.reservation-page .dropzone:hover,.reservation-page .dropzone.dragover{border-color:var(--lime);background:#1e2005;}
+.reservation-page .dropzone.filled{border-style:solid;border-color:var(--lime-dim);}
+.reservation-page .dropzone input[type=file]{
+  position:absolute;inset:0;opacity:0;cursor:pointer;
+}
+.reservation-page .dropzone svg{width:26px;height:26px;stroke:var(--text-dim);margin-bottom:8px;}
+.reservation-page .dropzone.filled svg{stroke:var(--lime);}
+.reservation-page .dz-label{font-size:13px;font-weight:600;color:var(--text);letter-spacing:0.3px;}
+.reservation-page .dz-hint{font-size:11px;color:var(--text-dim);margin-top:4px;font-family:'Segoe UI', Arial, sans-serif;text-transform:none;}
+.reservation-page .dz-filename{font-size:11px;color:var(--lime);margin-top:6px;font-family:'Segoe UI', Arial, sans-serif;text-transform:none;word-break:break-all;}
+.reservation-page .doc-section-label{
+  font-size:12px;color:var(--text-dim);letter-spacing:0.4px;font-weight:600;
+  margin:20px 0 10px;text-transform:uppercase;
+}
+.reservation-page .doc-section-label:first-child{margin-top:0;}
+
+/* ---- vehicle summary sidebar ---- */
+.reservation-page .sidebar .card{position:sticky;top:96px;}
+.reservation-page .veh-img{
+  width:100%;border-radius:8px;margin-bottom:16px;height:150px;
+  background:linear-gradient(135deg,#0c0c0c,#2a2a2a);
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--card-border);overflow:hidden;
+}
+.reservation-page .veh-img img{width:100%;height:100%;object-fit:cover;}
+.reservation-page .veh-name{font-size:20px;font-weight:700;letter-spacing:0.5px;}
+.reservation-page .veh-cat{color:var(--lime);font-size:12px;font-weight:600;letter-spacing:1px;margin-bottom:14px;}
+.reservation-page .specs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0;}
+.reservation-page .spec{
+  background:#1a1a1a;border:1px solid var(--card-border);border-radius:6px;padding:10px 12px;
+}
+.reservation-page .spec .val{font-size:15px;font-weight:700;color:var(--text);font-family:'Segoe UI', Arial, sans-serif;}
+.reservation-page .spec .lbl{font-size:10px;color:var(--text-dim);letter-spacing:0.5px;text-transform:uppercase;margin-top:2px;}
+.reservation-page .divider{height:1px;background:var(--card-border);margin:18px 0;}
+.reservation-page .price-row{display:flex;justify-content:space-between;font-size:13px;color:var(--text-dim);margin-bottom:10px;font-family:'Segoe UI', Arial, sans-serif;}
+.reservation-page .price-row.total{color:var(--text);font-size:16px;font-weight:700;font-family:'Segoe UI', Arial, sans-serif;text-transform:uppercase;letter-spacing:0.5px;}
+.reservation-page .price-row span:last-child{color:var(--text);}
+.reservation-page .price-row.total span:last-child{color:var(--lime);}
+
+.reservation-page .submit-btn{
+  width:100%;background:var(--lime);color:#111;border:none;
+  padding:16px;border-radius:6px;font-size:14px;font-weight:700;
+  letter-spacing:1px;cursor:pointer;margin-top:8px;transition:background .2s;
+  font-family:'Segoe UI', Arial, sans-serif;
+}
+.reservation-page .submit-btn:hover{background:var(--lime-dim);}
+.reservation-page .fineprint{font-size:11px;color:var(--text-dim);margin-top:12px;line-height:1.5;font-family:'Segoe UI', Arial, sans-serif;text-transform:none;}
+.reservation-page .fineprint a{color:var(--lime);text-decoration:none;}
+
+.reservation-page .checkbox-row{display:flex;align-items:flex-start;gap:10px;margin:16px 0;}
+.reservation-page .checkbox-row input{margin-top:3px;accent-color:var(--lime);}
+.reservation-page .checkbox-row label{font-size:12px;color:var(--text-dim);line-height:1.5;font-family:'Segoe UI', Arial, sans-serif;text-transform:none;}
