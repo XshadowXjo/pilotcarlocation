@@ -1,10 +1,13 @@
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import CarPlaceholder from './CarPlaceholder'
+import { getBestPromotion, applyPromotion } from '@/lib/pricing'
+import type { Promotion } from '@/types/promotion'
 import type { Vehicle } from '@/types/vehicle'
 
 interface VehicleCardProps {
   vehicle: Vehicle
+  promotions: Promotion[]
 }
 
 const priceColumns: { label: string; getValue: (v: Vehicle) => number | null }[] = [
@@ -13,8 +16,9 @@ const priceColumns: { label: string; getValue: (v: Vehicle) => number | null }[]
   { label: 'Semaine', getValue: (v) => v.pricePerWeek },
 ]
 
-export default function VehicleCard({ vehicle }: VehicleCardProps) {
+export default function VehicleCard({ vehicle, promotions }: VehicleCardProps) {
   const navigate = useNavigate()
+  const bestPromo = getBestPromotion(vehicle.id, vehicle.pricePerDay, promotions)
 
   const specs = [
     vehicle.powerHp !== null && `${vehicle.powerHp} ch`,
@@ -43,6 +47,11 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
             Featured
           </span>
         )}
+        {bestPromo && (
+          <span className="absolute left-2.5 top-2.5 rounded bg-red-500 px-6 py-3 text-xs font-extrabold uppercase tracking-wider text-white">
+            {bestPromo.discountType === 'percentage' ? `-${bestPromo.discountValue}%` : `-${bestPromo.discountValue}€`}
+          </span>
+        )}
       </div>
 
       <div className="p-4 pb-[18px]">
@@ -66,13 +75,23 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         <dl className="mb-3 grid grid-cols-3 gap-1.5 border-y border-border py-3 text-center">
           {priceColumns.map((col) => {
             const value = col.getValue(vehicle)
+            const discounted = applyPromotion(value, bestPromo)
             return (
               <div key={col.label}>
                 <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">
                   {col.label}
                 </dt>
                 <dd className="text-base font-bold text-card-foreground">
-                  {value === null ? '—' : `${value} €`}
+                  {value === null ? (
+                    '—'
+                  ) : bestPromo && discounted !== value ? (
+                    <>
+                      <span className="mr-1 text-xs font-normal text-muted-foreground line-through">{value}€</span>
+                      <span className="text-primary">{discounted}€</span>
+                    </>
+                  ) : (
+                    `${value} €`
+                  )}
                 </dd>
               </div>
             )

@@ -1,5 +1,7 @@
 export type FileKey = 'permisRecto' | 'permisVerso' | 'cniRecto' | 'cniVerso' | 'justificatif'
 
+export type CautionMethod = 'online' | 'on_site'
+
 export interface ReservationFormState {
   firstName: string
   lastName: string
@@ -14,7 +16,12 @@ export interface ReservationFormState {
   pickupLocation: string
   startDate: string
   endDate: string
+  deliveryAddress: string
+  deliveryPrice: number | null
+  deliveryDistanceKm: number | null
+  cautionMethod: CautionMethod
   files: Record<FileKey, File | null>
+  existingDocumentPaths: Partial<Record<FileKey, string>>
   cguAccepted: boolean
 }
 
@@ -29,9 +36,13 @@ export const emptyReservationForm: ReservationFormState = {
   postalCode: '',
   country: 'France',
   licenseNumber: '',
-  pickupLocation: 'versailles',
+  pickupLocation: 'mantes-station',
   startDate: '',
   endDate: '',
+  deliveryAddress: '',
+  deliveryPrice: null,
+  deliveryDistanceKm: null,
+  cautionMethod: 'online',
   files: {
     permisRecto: null,
     permisVerso: null,
@@ -39,5 +50,6 @@ export const emptyReservationForm: ReservationFormState = {
     cniVerso: null,
     justificatif: null,
   },
+  existingDocumentPaths: {},
   cguAccepted: false,
 }

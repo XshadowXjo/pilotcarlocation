@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom'
 import { useVehicle } from '../hooks/useVehicle'
 import { useVehicles } from '../hooks/useVehicles'
 import { ReservationProvider } from '../context/ReservationContext'
+import ProfileAutofill from '../components/reservation/ProfileAutofill'
 import PersonalInfoForm from '../components/reservation/PersonalInfoForm'
 import DateLocationForm from '../components/reservation/DateLocationForm'
 import DocumentsUpload from '../components/reservation/DocumentsUpload'
@@ -32,7 +33,9 @@ export default function ReservationPage() {
 
   return (
     <ReservationProvider>
-      <div className="bg-background text-foreground">
+      <ProfileAutofill />
+      <div className="bg-background text-foreground"
+        style={{backgroundImage: "url('/images/bg.jpg')"}}>
         <div className="mx-auto max-w-[1240px] px-6 pt-9 md:px-12">
           <div className="mb-2.5 text-[13px] text-muted-foreground">
             Véhicules &nbsp;/&nbsp; <b className="font-medium text-primary">{vehicle.name}</b> &nbsp;/&nbsp; Réservation
@@ -48,7 +51,7 @@ export default function ReservationPage() {
         <div className="mx-auto grid max-w-[1240px] grid-cols-1 gap-7 px-6 py-8 md:px-12 lg:grid-cols-[1fr_380px]">
           <div>
             <PersonalInfoForm />
-            <DateLocationForm />
+            <DateLocationForm vehicleId={vehicle.id} />
             <DocumentsUpload />
           </div>
           <div>

@@ -20,26 +20,31 @@ export default function DocumentsUpload({ stepNumber = 3 }: DocumentsUploadProps
       <p className="mb-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Permis de conduire</p>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Dropzone id="permisRecto" label="Recto" hint="JPG, PNG ou PDF · 10 Mo max"
-          file={form.files.permisRecto} isDragOver={dragOverId === 'permisRecto'}
+          file={form.files.permisRecto} existingPath={form.existingDocumentPaths.permisRecto}
+          isDragOver={dragOverId === 'permisRecto'}
           onFileChange={updateFile} onDragOver={setDragOverId} onDragLeave={() => setDragOverId(null)} />
         <Dropzone id="permisVerso" label="Verso" hint="JPG, PNG ou PDF · 10 Mo max"
-          file={form.files.permisVerso} isDragOver={dragOverId === 'permisVerso'}
+          file={form.files.permisVerso} existingPath={form.existingDocumentPaths.permisVerso}
+          isDragOver={dragOverId === 'permisVerso'}
           onFileChange={updateFile} onDragOver={setDragOverId} onDragLeave={() => setDragOverId(null)} />
       </div>
 
       <p className="mb-2.5 mt-5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Carte d'identité</p>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Dropzone id="cniRecto" label="Recto" hint="JPG, PNG ou PDF · 10 Mo max"
-          file={form.files.cniRecto} isDragOver={dragOverId === 'cniRecto'}
+          file={form.files.cniRecto} existingPath={form.existingDocumentPaths.cniRecto}
+          isDragOver={dragOverId === 'cniRecto'}
           onFileChange={updateFile} onDragOver={setDragOverId} onDragLeave={() => setDragOverId(null)} />
         <Dropzone id="cniVerso" label="Verso" hint="JPG, PNG ou PDF · 10 Mo max"
-          file={form.files.cniVerso} isDragOver={dragOverId === 'cniVerso'}
+          file={form.files.cniVerso} existingPath={form.existingDocumentPaths.cniVerso}
+          isDragOver={dragOverId === 'cniVerso'}
           onFileChange={updateFile} onDragOver={setDragOverId} onDragLeave={() => setDragOverId(null)} />
       </div>
 
       <p className="mb-2.5 mt-5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Justificatif de domicile</p>
       <Dropzone id="justificatif" label="Facture récente (- de 3 mois)" hint="EDF, téléphone, box internet... · JPG, PNG ou PDF"
-        file={form.files.justificatif} isDragOver={dragOverId === 'justificatif'}
+        file={form.files.justificatif} existingPath={form.existingDocumentPaths.justificatif}
+        isDragOver={dragOverId === 'justificatif'}
         onFileChange={updateFile} onDragOver={setDragOverId} onDragLeave={() => setDragOverId(null)} />
     </div>
   )

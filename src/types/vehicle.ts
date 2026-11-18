@@ -6,6 +6,7 @@ export interface Vehicle {
   pricePerDay: number
   priceThreeDays: number
   pricePerWeek: number
+  archived: boolean
   powerHp: number | null
   transmission: string | null
   fuelType: string | null

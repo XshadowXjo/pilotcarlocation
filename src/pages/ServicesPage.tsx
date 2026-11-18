@@ -8,9 +8,9 @@ const includedKm: Record<'24h' | '3j' | 'semaine', string> = {
 }
 
 const infoCards = [
-  { title: 'Inclus', text: 'Assurance tous risques, kilométrage indiqué.' },
-  { title: 'Surplus', text: 'Km supplémentaires: 0,50 €/ km,' },
-  { title: 'Longue durée', text: 'Au-delà de 7 jours : Contactez nous pour demandez un devis.' },
+  { title: 'Inclus', text: 'Carte grise valide incluse, Assurance tous risques, kilométrage indiqué.' },
+  { title: 'Surplus', text: 'Km supplémentaires: 0,50 €/ km, Km supplémentaires: 0,50 €/ km' },
+  { title: 'Longue durée', text: 'Au-delà de 6 jours : Contactez nous pour demandez un devis.' },
 ]
 
 export default function ServicesPage() {
@@ -19,7 +19,7 @@ export default function ServicesPage() {
   return (
     <div className="bg-background text-foreground">
       <section className="mx-auto max-w-6xl px-6 py-14 md:px-12">
-        <h1 className="text-3xl font-bold uppercase tracking-wide sm:text-4xl">
+        <h1 className="text-3xl text-black font-bold uppercase tracking-wide sm:text-4xl">
           Tarifs & <span className="text-primary">Services</span>
         </h1>
         <p className="mt-3 max-w-2xl text-sm text-muted-foreground">

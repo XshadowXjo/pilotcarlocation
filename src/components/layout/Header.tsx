@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
+import { useAuth } from '@/context/AuthContext'
+import AuthModal from '@/components/auth/AuthModal'
 import { Button } from '@/components/ui/button'
 
 const navLinks = [
@@ -12,8 +14,11 @@ const navLinks = [
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [authModalOpen, setAuthModalOpen] = useState(false)
+  const { user, isAdmin, signOut } = useAuth()
 
   return (
+    <>
     <header className="sticky top-0 z-100 border-b border-black/[0.07] bg-[#E4E2E2] backdrop-blur-sm">
       <div className="flex h-20 items-center justify-between px-6 md:px-11">
         {/* Logo */}
@@ -34,8 +39,18 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Login button desktop */}
-        <button className="btn-cta hidden md:inline-flex">Se connecter</button>
+        {/* Auth desktop */}
+        {user ? (
+          <div className="hidden items-center gap-3 md:flex">
+            {isAdmin && <NavLink to="/admin" className="nav-link">Admin</NavLink>}
+            <NavLink to="/compte" className="nav-link">Mon compte</NavLink>
+            <button className="btn-outline" onClick={() => signOut()}>Déconnexion</button>
+          </div>
+        ) : (
+          <button className="btn-cta hidden md:inline-flex" onClick={() => setAuthModalOpen(true)}>
+            Se connecter
+          </button>
+        )}
 
         {/* Bouton hamburger, mobile uniquement */}
         <button
@@ -63,11 +78,25 @@ export default function Header() {
               {link.label}
             </NavLink>
           ))}
-          <Button className="mt-2" onClick={() => setIsMenuOpen(false)}>
-            Se connecter
-          </Button>
+          {user ? (
+            <>
+              {isAdmin && (
+                <NavLink to="/admin" onClick={() => setIsMenuOpen(false)} className="nav-link py-2">
+                  Admin
+                </NavLink>
+              )}
+              <NavLink to="/compte" onClick={() => setIsMenuOpen(false)} className="nav-link py-2">Mon compte</NavLink>
+              <Button className="mt-2" onClick={() => { signOut(); setIsMenuOpen(false) }}>Déconnexion</Button>
+            </>
+          ) : (
+            <Button className="mt-2" onClick={() => { setAuthModalOpen(true); setIsMenuOpen(false) }}>
+              Se connecter
+            </Button>
+          )}
         </nav>
       )}
     </header>
+    <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
+    </>
   )
 }

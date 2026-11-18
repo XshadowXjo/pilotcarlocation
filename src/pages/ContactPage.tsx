@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useVehicles } from '../hooks/useVehicles'
+import { sendContactMessage } from '../services/supabase/contact'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
@@ -20,10 +21,37 @@ export default function ContactPage() {
   const [sent, setSent] = useState(false)
   const [selectedVehicle, setSelectedVehicle] = useState(carFromUrl)
 
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+
+    setIsSubmitting(true)
+    setSubmitError(null)
+
+    try {
+      await sendContactMessage({
+        name: formData.get('name') as string,
+        phone: formData.get('phone') as string,
+        email: formData.get('email') as string,
+        vehicleId: selectedVehicle || null,
+        duration: formData.get('duration') as string,
+        message: formData.get('message') as string,
+      })
+      setSent(true)
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Une erreur est survenue.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }  
+
   return (
     <div className="bg-background text-foreground">
       <section className="mx-auto max-w-5xl px-6 py-14 md:px-12">
-        <h1 className="text-3xl font-bold uppercase tracking-wide sm:text-4xl">
+        <h1 className="text-3xl font-bold uppercase text-black tracking-wide sm:text-4xl">
           Nous <span className="text-primary">contacter</span>
         </h1>
         <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
@@ -48,15 +76,12 @@ export default function ContactPage() {
             </div>
           ) : (
             <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                setSent(true)
-              }}
+              onSubmit={handleSubmit}
               className="grid gap-3 rounded-xl border border-border bg-card p-6 sm:grid-cols-2"
             >
-              <Input required placeholder="Nom et prénom" />
-              <Input required type="tel" placeholder="Téléphone" />
-              <Input required type="email" placeholder="E-mail" className="sm:col-span-2" />
+              <Input required name="name" placeholder="Nom et prénom" />
+              <Input required name="phone" type="tel" placeholder="Téléphone" />
+              <Input required name="email" type="email" placeholder="E-mail" className="sm:col-span-2" />
 
               <Select value={selectedVehicle} onValueChange={setSelectedVehicle}>
                 <SelectTrigger className="w-full">
@@ -70,22 +95,29 @@ export default function ContactPage() {
               </Select>
 
               <Input
+                name="duration"
                 placeholder="Durée souhaitée (ex : 3 semaines)"
                 defaultValue={longue ? "Plus d'une semaine" : ''}
               />
 
               <textarea
                 required
+                name="message"
                 rows={5}
                 placeholder="Votre message"
                 className="rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition-colors focus:border-primary sm:col-span-2"
               />
 
+              {submitError && (
+                <p className="text-xs text-destructive sm:col-span-2">{submitError}</p>
+              )}
+
               <button
                 type="submit"
+                disabled={isSubmitting}
                 className="rounded-md bg-primary px-4 py-3 text-sm font-bold uppercase tracking-widest text-primary-foreground sm:col-span-2"
               >
-                Envoyer la demande
+                {isSubmitting ? 'Envoi en cours...' : 'Envoyer la demande'}
               </button>
             </form>
           )}
@@ -103,7 +135,7 @@ export default function ContactPage() {
 
             <div className="rounded-xl border border-border bg-card p-5">
               <h2 className="text-lg font-bold">Horaires</h2>
-              <p className="mt-2 text-muted-foreground">7j/7 · 8h – 20h</p>
+              <p className="mt-2 text-muted-foreground">7j/7 · 8h – 00h</p>
             </div>
 
             <div className="rounded-xl border border-border bg-card p-5">
