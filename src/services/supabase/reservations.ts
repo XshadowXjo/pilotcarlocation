@@ -1,9 +1,7 @@
 import { supabase } from './client'
 import type { ReservationFormState, FileKey } from '../../types/reservation'
 import { upsertUserProfile } from './profile'
-import { getVehicleById } from './vehicles'
-import { getActivePromotions } from './promotions'
-import { computeReservationTotal, computeDeposit, countRentalDays, getBestPromotion } from '../../lib/pricing'
+import { functionErrorMessage } from '../../lib/functionErrors'
 
 async function uploadDocument(vehicleId: string, key: FileKey, file: File): Promise<string> {
   const extension = file.name.split('.').pop()
@@ -25,7 +23,6 @@ export async function createReservation(
   form: ReservationFormState,
   userId: string | null
 ): Promise<string> {
-  const reservationId = crypto.randomUUID()
   const documentPaths: Partial<Record<FileKey, string>> = {}
 
   for (const key of Object.keys(form.files) as FileKey[]) {
@@ -37,61 +34,13 @@ export async function createReservation(
     }
   }
 
-  // Prix figé au moment de la réservation
-  const vehicle = await getVehicleById(vehicleId)
-  const promotions = await getActivePromotions()
-  const bestPromo = vehicle ? getBestPromotion(vehicleId, vehicle.pricePerDay, promotions) : null
-  const days = countRentalDays(form.startDate, form.endDate)
-  const totalPrice = vehicle ? computeReservationTotal(vehicle, days, bestPromo, form.deliveryPrice) : null
-  const depositDue = totalPrice !== null ? computeDeposit(totalPrice) : null
-
-  const { error } = await supabase
-    .from('reservations')
-    .insert({
-      id: reservationId,
-      vehicle_id: vehicleId,
-      user_id: userId,
-      first_name: form.firstName,
-      last_name: form.lastName,
-      birth_date: form.birthDate,
-      phone: form.phone,
-      email: form.email,
-      address: form.address,
-      city: form.city,
-      postal_code: form.postalCode,
-      country: form.country,
-      license_number: form.licenseNumber,
-      pickup_location: form.pickupLocation,
-      start_date: form.startDate,
-      end_date: form.endDate,
-      delivery_address: form.deliveryAddress || null,
-      delivery_price: form.deliveryPrice,
-      total_price: totalPrice,
-      deposit_due: depositDue,
-      caution_amount: vehicle?.depositAmount ?? null,
-      caution_method: vehicle?.depositAmount ? form.cautionMethod : null,
-      permis_recto_path: documentPaths.permisRecto ?? null,
-      permis_verso_path: documentPaths.permisVerso ?? null,
-      cni_recto_path: documentPaths.cniRecto ?? null,
-      cni_verso_path: documentPaths.cniVerso ?? null,
-      justificatif_path: documentPaths.justificatif ?? null,
-      cgu_accepted: form.cguAccepted,
-    })
-
-  if (error) {
-    throw new Error(`Impossible d'enregistrer la réservation : ${error.message}`)
-  }
-
-  // Emails de notification — on ne bloque pas la réservation si ça échoue
-  supabase.functions
-    .invoke('send-reservation-email', { body: { reservationId } })
-    .then(({ data, error: invokeError }) => {
-      if (invokeError || data?.error) {
-        console.error("Échec de l'envoi des emails :", invokeError ?? data?.error)
-      } else if (data?.errors?.length) {
-        console.error('Emails partiellement envoyés :', data.errors)
-      }
-    })
+  // Le serveur recalcule le prix, vérifie les disponibilités et envoie les e-mails
+  const { data, error } = await supabase.functions.invoke('create-reservation', {
+    body: { vehicleId, documentPaths, form: { ...form, files: undefined, existingDocumentPaths: undefined } },
+  })
+  if (error) throw new Error(await functionErrorMessage(error))
+  if (data?.error) throw new Error(data.error)
+  const reservationId: string = data.reservationId
 
   if (userId) {
     try {

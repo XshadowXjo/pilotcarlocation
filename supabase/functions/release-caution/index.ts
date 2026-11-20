@@ -1,63 +1,48 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { verifyWebhookSignature } from '../_shared/swikly.ts'
+import { corsHeaders, json, errorResponse, createAdminClient, requireAdmin, HttpError } from '../_shared/http.ts'
+import { getRequest, releaseRequest } from '../_shared/swikly.ts'
 
-const webhookSecret = Deno.env.get('SWIKLY_WEBHOOK_SECRET')!
+const supabaseAdmin = createAdminClient()
 
-const supabaseAdmin = createClient(
-  Deno.env.get('SUPABASE_URL')!,
-  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-)
-
+// Libération de la caution Swikly après la restitution du véhicule. Réservé aux administrateurs.
 Deno.serve(async (req) => {
-  const signature = req.headers.get('Swikly-Signature')
-  if (!signature) return new Response('Signature manquante', { status: 400 })
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
-  const body = await req.text()
-
-  if (!(await verifyWebhookSignature(body, signature, webhookSecret))) {
-    console.error('Signature Swikly invalide')
-    return new Response('Signature invalide', { status: 400 })
-  }
-
-  let payload: any
   try {
-    payload = JSON.parse(body)
-  } catch {
-    return new Response('Corps invalide', { status: 400 })
-  }
+    await requireAdmin(supabaseAdmin, req)
 
-  if (payload.event === 'requestSecured') {
-    const swiklyId: string | undefined = payload.request?.id
-    const customId: string | undefined = payload.request?.customId
+    const { reservationId } = await req.json()
+    if (!reservationId) throw new HttpError(400, 'Réservation manquante')
 
-    let updatedRows = 0
+    const { data: reservation, error } = await supabaseAdmin
+      .from('reservations')
+      .select('id, swikly_id, caution_method, caution_status')
+      .eq('id', reservationId)
+      .maybeSingle()
+    if (error) throw new Error(`Lecture de la réservation impossible : ${error.message}`)
+    if (!reservation) throw new HttpError(404, 'Réservation introuvable')
+    if (reservation.caution_method !== 'online' || !reservation.swikly_id) {
+      throw new HttpError(400, "Aucune caution en ligne pour cette réservation")
+    }
+    if (reservation.caution_status === 'released') return json({ released: true })
 
-    if (swiklyId) {
-      const { data, error } = await supabaseAdmin
-        .from('reservations')
-        .update({ caution_status: 'accepted' })
-        .eq('swikly_id', swiklyId)
-        .select('id')
-      if (error) {
-        console.error('Mise à jour de la caution échouée :', error.message)
-        return new Response(`Erreur base de données: ${error.message}`, { status: 500 })
+    // Swikly fait foi : on ne libère que ce qui est réellement bloqué chez eux
+    const existing = await getRequest(reservation.swikly_id)
+    const status = existing.deposit?.status
+    if (status !== 'Released') {
+      if (status !== 'Accepted') {
+        throw new HttpError(400, `La caution n'est pas active chez Swikly (statut : ${status ?? 'inconnu'})`)
       }
-      updatedRows = data?.length ?? 0
+      await releaseRequest(reservation.swikly_id)
     }
 
-    if (updatedRows === 0 && customId) {
-      const { error } = await supabaseAdmin
-        .from('reservations')
-        .update({ caution_status: 'accepted', swikly_id: swiklyId ?? null })
-        .eq('id', customId)
-      if (error) {
-        console.error('Mise à jour de la caution échouée :', error.message)
-        return new Response(`Erreur base de données: ${error.message}`, { status: 500 })
-      }
-    }
-  }
+    const { error: updateError } = await supabaseAdmin
+      .from('reservations')
+      .update({ caution_status: 'released' })
+      .eq('id', reservationId)
+    if (updateError) throw new Error(`Caution libérée mais statut non enregistré : ${updateError.message}`)
 
-  return new Response(JSON.stringify({ received: true }), {
-    headers: { 'Content-Type': 'application/json' },
-  })
+    return json({ released: true })
+  } catch (err) {
+    return errorResponse(err)
+  }
 })

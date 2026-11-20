@@ -25,11 +25,11 @@ export default function AppRouter() {
         <Route path="/compte" element={<AccountPage />} />
         <Route path="/paiement/:result" element={<PaymentResultPage />} />
         <Route path="/admin" element={<AdminLayout />}>
-+         <Route index element={<Navigate to="/admin/vehicules" replace />} />
-+         <Route path="vehicules" element={<AdminVehiclesPage />} />
-+         <Route path="reservations" element={<AdminReservationsPage />} />
-+          <Route path="promotions" element={<AdminPromotionsPage />} />
-+       </Route>  
+          <Route index element={<Navigate to="/admin/vehicules" replace />} />
+          <Route path="vehicules" element={<AdminVehiclesPage />} />
+          <Route path="reservations" element={<AdminReservationsPage />} />
+          <Route path="promotions" element={<AdminPromotionsPage />} />
+        </Route>
       </Route>
     </Routes>
   )
