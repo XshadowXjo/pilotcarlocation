@@ -385,7 +385,7 @@ function QuickBookingWizardInner() {
               className="mt-0.5 accent-primary"
             />
             <label htmlFor="cgu-wizard" className="text-xs leading-relaxed text-white/80">
-              J'accepte les <a href="#" className="text-primary">conditions générales de location</a> et confirme l'exactitude des documents fournis.
+              J'accepte les <a href="/conditions-generales" target="_blank" rel="noreferrer" className="text-primary underline">conditions générales de location</a> et confirme l'exactitude des documents fournis.
             </label>
           </div>
 

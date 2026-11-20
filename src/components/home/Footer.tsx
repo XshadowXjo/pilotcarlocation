@@ -1,4 +1,10 @@
-const footerLinks = ['Mentions légales', 'CGU', 'Confidentialité']
+import { Link } from 'react-router-dom'
+
+const footerLinks = [
+  { label: 'Mentions légales', to: '/mentions-legales' },
+  { label: 'Conditions générales', to: '/conditions-generales' },
+  { label: 'Confidentialité', to: '/confidentialite' },
+]
 
 export default function Footer() {
   return (
@@ -16,12 +22,13 @@ export default function Footer() {
 
       <div className="flex gap-5">
         {footerLinks.map((link) => (
-          <button
-            key={link}
+          <Link
+            key={link.to}
+            to={link.to}
             className="text-[10px] font-bold uppercase tracking-wider text-[#4A4C50] transition-colors hover:text-[#17181A]"
           >
-            {link}
-          </button>
+            {link.label}
+          </Link>
         ))}
       </div>
     </footer>

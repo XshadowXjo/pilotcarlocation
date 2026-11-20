@@ -11,6 +11,7 @@ import AdminVehiclesPage from '../pages/admin/AdminVehiclesPage'
 import AdminReservationsPage from '../pages/admin/AdminReservationsPage'
 import AdminPromotionsPage from '../pages/admin/AdminPromotionsPage'
 import PaymentResultPage from '../pages/PaymentResultPage'
+import { MentionsLegalesPage, ConditionsGeneralesPage, ConfidentialitePage } from '../pages/LegalPages'
 
 export default function AppRouter() {
   return (
@@ -24,6 +25,9 @@ export default function AppRouter() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/compte" element={<AccountPage />} />
         <Route path="/paiement/:result" element={<PaymentResultPage />} />
+        <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
+        <Route path="/conditions-generales" element={<ConditionsGeneralesPage />} />
+        <Route path="/confidentialite" element={<ConfidentialitePage />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Navigate to="/admin/vehicules" replace />} />
           <Route path="vehicules" element={<AdminVehiclesPage />} />

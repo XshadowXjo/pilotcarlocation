@@ -171,7 +171,7 @@ export default function VehicleSummary({ vehicle }: VehicleSummaryProps) {
           className="mt-0.5 accent-primary"
         />
         <label htmlFor="cgu" className="text-xs leading-relaxed text-muted-foreground">
-          J'accepte les <a href="#" className="text-primary">conditions générales de location</a> et confirme l'exactitude des documents fournis.
+          J'accepte les <a href="/conditions-generales" target="_blank" rel="noreferrer" className="text-primary underline">conditions générales de location</a> et confirme l'exactitude des documents fournis.
         </label>
       </div>
 
