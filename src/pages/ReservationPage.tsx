@@ -35,7 +35,7 @@ export default function ReservationPage() {
     <ReservationProvider>
       <ProfileAutofill />
       <div className="bg-background text-foreground"
-        style={{backgroundImage: "url('/images/bg.jpg')"}}>
+        style={{backgroundImage: "url('/images/bg.webp')"}}>
         <div className="mx-auto max-w-[1240px] px-6 pt-9 md:px-12">
           <div className="mb-2.5 text-[13px] text-muted-foreground">
             Véhicules &nbsp;/&nbsp; <b className="font-medium text-primary">{vehicle.name}</b> &nbsp;/&nbsp; Réservation

@@ -1,4 +1,5 @@
 import { supabase } from './client'
+import { functionErrorMessage } from '../../lib/functionErrors'
 
 export interface PaymentLinkResult {
   url?: string
@@ -10,20 +11,7 @@ export async function getPaymentLink(reservationId: string): Promise<PaymentLink
     body: { reservationId },
   })
 
-  if (error) {
-    let message = error.message
-    const context = (error as { context?: Response }).context
-    if (context && typeof context.json === 'function') {
-      try {
-        const body = await context.json()
-        if (body?.error) message = body.error
-      } catch {
-        // on garde le message générique
-      }
-    }
-    throw new Error(message)
-  }
-
+  if (error) throw new Error(await functionErrorMessage(error))
   if (data?.error) throw new Error(data.error)
   return data as PaymentLinkResult
 }

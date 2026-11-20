@@ -291,6 +291,7 @@ function QuickBookingWizardInner() {
                 selected={customRange}
                 onSelect={setCustomRange}
                 disabled={[{ before: today }, ...bookedRanges.map((r) => ({ from: r.start, to: r.end }))]}
+                excludeDisabled
                 numberOfMonths={2}
                 className="mx-auto"
               />

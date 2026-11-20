@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Layout from '../components/layout/Layout'
 import HomePage from '../pages/HomePage'
@@ -5,16 +6,21 @@ import ReservationPage from '../pages/ReservationPage'
 import VehiclesPage from '../pages/VehiclesPage'
 import ServicesPage from '../pages/ServicesPage'
 import ContactPage from '../pages/ContactPage'
-import AccountPage from '../pages/AccountPage'
-import AdminLayout from '../components/layout/AdminLayout'
-import AdminVehiclesPage from '../pages/admin/AdminVehiclesPage'
-import AdminReservationsPage from '../pages/admin/AdminReservationsPage'
-import AdminPromotionsPage from '../pages/admin/AdminPromotionsPage'
 import PaymentResultPage from '../pages/PaymentResultPage'
 import { MentionsLegalesPage, ConditionsGeneralesPage, ConfidentialitePage } from '../pages/LegalPages'
 
+// Espace client et administration chargés à la demande : le visiteur ne télécharge pas ce code
+const AccountPage = lazy(() => import('../pages/AccountPage'))
+const AdminLayout = lazy(() => import('../components/layout/AdminLayout'))
+const AdminVehiclesPage = lazy(() => import('../pages/admin/AdminVehiclesPage'))
+const AdminReservationsPage = lazy(() => import('../pages/admin/AdminReservationsPage'))
+const AdminPromotionsPage = lazy(() => import('../pages/admin/AdminPromotionsPage'))
+
+const loading = <p className="p-12 text-center text-sm text-muted-foreground">Chargement...</p>
+
 export default function AppRouter() {
   return (
+    <Suspense fallback={loading}>
     <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<HomePage />} />
@@ -36,5 +42,6 @@ export default function AppRouter() {
         </Route>
       </Route>
     </Routes>
+    </Suspense>
   )
 }

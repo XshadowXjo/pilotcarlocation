@@ -9,13 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar } from '@/components/ui/calendar'
 import type { DateRange } from 'react-day-picker'
 import { pickupLocations } from '@/lib/pickupLocations'
+import { toISODate, startOfToday } from '@/lib/dates'
 
-function toISODate(date: Date): string {
-  const y = date.getFullYear()
-  const m = String(date.getMonth() + 1).padStart(2, '0')
-  const d = String(date.getDate()).padStart(2, '0')
-  return `${y}-${m}-${d}`
-}
 
 interface DateLocationFormProps {
   vehicleId: string
@@ -42,8 +37,7 @@ export default function DateLocationForm({ vehicleId }: DateLocationFormProps) {
     }
   }
 
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  const today = startOfToday()
 
   const selectedRange: DateRange | undefined = form.startDate
     ? { from: new Date(form.startDate), to: form.endDate ? new Date(form.endDate) : undefined }
@@ -107,6 +101,7 @@ export default function DateLocationForm({ vehicleId }: DateLocationFormProps) {
             selected={selectedRange}
             onSelect={handleRangeSelect}
             disabled={[{ before: today }, ...bookedRanges.map((r) => ({ from: r.start, to: r.end }))]}
+            excludeDisabled
             numberOfMonths={2}
             className="mx-auto"
           />

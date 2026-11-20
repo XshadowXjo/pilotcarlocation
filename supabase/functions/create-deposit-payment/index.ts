@@ -1,58 +1,18 @@
-import Stripe from 'npm:stripe@17'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { corsHeaders, json, errorResponse, createAdminClient, requireAdmin, HttpError, escapeHtml, formatDate } from '../_shared/http.ts'
+import { createDepositCheckout } from '../_shared/stripe.ts'
 import { ensureCautionLink, type CautionOutcome } from '../_shared/caution.ts'
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
-  httpClient: Stripe.createFetchHttpClient(),
-})
-const SITE_URL = Deno.env.get('SITE_URL')!
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')!
 const EMAIL_FROM = Deno.env.get('EMAIL_FROM') ?? 'onboarding@resend.dev'
 
-const supabaseAdmin = createClient(
-  Deno.env.get('SUPABASE_URL')!,
-  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-)
+const supabaseAdmin = createAdminClient()
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-function json(body: unknown, status = 200): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  })
-}
-
-function escapeHtml(value: unknown): string {
-  return String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-}
-
-function formatDate(isoDate: string): string {
-  return new Date(isoDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
-}
-
+// Après confirmation par l'admin : envoie au client le lien d'acompte et, si besoin, de caution
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
   try {
-    // Accès réservé aux administrateurs
-    const token = (req.headers.get('Authorization') ?? '').replace('Bearer ', '')
-    const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(token)
-    if (userError || !userData.user) return json({ error: 'Connexion requise' }, 401)
-
-    const { data: profile } = await supabaseAdmin
-      .from('user_profiles')
-      .select('is_admin')
-      .eq('user_id', userData.user.id)
-      .maybeSingle()
-    if (!profile?.is_admin) return json({ error: 'Accès réservé aux administrateurs' }, 403)
+    await requireAdmin(supabaseAdmin, req)
 
     const { reservationId } = await req.json()
 
@@ -62,39 +22,13 @@ Deno.serve(async (req) => {
       .eq('id', reservationId)
       .single()
 
-    if (error || !reservation) throw new Error(`Réservation introuvable: ${error?.message}`)
-    if (reservation.status !== 'confirmed') throw new Error("La réservation n'est pas confirmée")
+    if (error || !reservation) throw new HttpError(404, 'Réservation introuvable')
+    if (reservation.status !== 'confirmed') throw new HttpError(400, "La réservation n'est pas confirmée")
 
     // 1. Acompte (Stripe), s'il n'est pas déjà réglé
     let depositUrl: string | null = null
     if (reservation.payment_status !== 'deposit_paid') {
-      if (!reservation.deposit_due) throw new Error("Aucun montant d'acompte calculé pour cette réservation")
-
-      const session = await stripe.checkout.sessions.create({
-        mode: 'payment',
-        customer_email: reservation.email,
-        line_items: [{
-          price_data: {
-            currency: 'eur',
-            unit_amount: Math.round(reservation.deposit_due * 100),
-            product_data: {
-              name: `Acompte — ${reservation.vehicles?.name ?? 'Location'} (${reservation.start_date} au ${reservation.end_date})`,
-            },
-          },
-          quantity: 1,
-        }],
-        success_url: `${SITE_URL}/paiement/succes`,
-        cancel_url: `${SITE_URL}/paiement/annule`,
-        metadata: { reservation_id: reservationId },
-      })
-
-      const { error: updateError } = await supabaseAdmin
-        .from('reservations')
-        .update({ stripe_session_id: session.id, stripe_payment_link: session.url })
-        .eq('id', reservationId)
-      if (updateError) throw new Error(`Impossible d'enregistrer le lien de paiement: ${updateError.message}`)
-
-      depositUrl = session.url
+      depositUrl = await createDepositCheckout(supabaseAdmin, reservation)
     }
 
     // 2. Caution en ligne (Swikly) : un échec ici n'empêche pas l'envoi de l'acompte
@@ -157,6 +91,6 @@ Deno.serve(async (req) => {
 
     return json({ success: true, depositSent: !!depositUrl, cautionSent: !!cautionUrl, cautionError })
   } catch (err) {
-    return json({ error: err instanceof Error ? err.message : 'Erreur inconnue' }, 500)
+    return errorResponse(err)
   }
 })
