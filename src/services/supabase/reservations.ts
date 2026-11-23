@@ -3,13 +3,19 @@ import type { ReservationFormState, FileKey } from '../../types/reservation'
 import { upsertUserProfile } from './profile'
 import { functionErrorMessage } from '../../lib/functionErrors'
 
+// Type à déclarer quand le navigateur n'en donne pas (photos HEIC notamment)
+const TYPE_BY_EXTENSION: Record<string, string> = {
+  jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp',
+  heic: 'image/heic', heif: 'image/heif', pdf: 'application/pdf',
+}
+
 async function uploadDocument(vehicleId: string, key: FileKey, file: File): Promise<string> {
-  const extension = file.name.split('.').pop()
+  const extension = (file.name.split('.').pop() ?? '').toLowerCase()
   const path = `${vehicleId}/${Date.now()}-${key}.${extension}`
 
   const { error } = await supabase.storage
     .from('reservation-documents')
-    .upload(path, file)
+    .upload(path, file, { contentType: file.type || TYPE_BY_EXTENSION[extension] })
 
   if (error) {
     throw new Error(`Échec de l'envoi du document "${key}" : ${error.message}`)

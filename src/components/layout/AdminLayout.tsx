@@ -5,6 +5,7 @@ const adminLinks = [
   { label: 'Véhicules', to: '/admin/vehicules' },
   { label: 'Réservations', to: '/admin/reservations' },
   { label: 'Promotions', to: '/admin/promotions' },
+  { label: 'Messages', to: '/admin/messages' },
 ]
 
 export default function AdminLayout() {

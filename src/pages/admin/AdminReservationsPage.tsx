@@ -1,5 +1,6 @@
 import { useAdminReservations } from '../../hooks/useAdminReservations'
 import ReservationCard from '../../components/admin/ReservationCard'
+import DocumentsPurgePanel from '../../components/admin/DocumentsPurgePanel'
 
 export default function AdminReservationsPage() {
   const { reservations, isLoading, error, reload } = useAdminReservations()
@@ -7,6 +8,7 @@ export default function AdminReservationsPage() {
   return (
     <div>
       <h1 className="mb-6 text-xl font-bold uppercase tracking-wide">Réservations</h1>
+      <DocumentsPurgePanel />
 
       {isLoading && <p className="text-sm text-muted-foreground">Chargement...</p>}
       {error && <p className="text-sm text-destructive">{error}</p>}

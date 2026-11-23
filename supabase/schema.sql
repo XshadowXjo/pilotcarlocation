@@ -1,4 +1,4 @@
--- Instantané du schéma de la base Supabase (projet "PCE Project"), exporté le 2026-11-20.
+-- Instantané du schéma de la base Supabase (projet "PCE Project"), exporté le 2026-11-20, mis à jour le 2026-11-24.
 --
 -- C'est une RÉFÉRENCE, pas une migration : il décrit l'état réel de la base (tables,
 -- contraintes, vue, fonctions, triggers, politiques RLS, buckets) pour pouvoir le relire
@@ -278,15 +278,18 @@ create policy "Users can insert their own profile" on public.user_profiles as pe
 create policy "Users can update their own profile" on public.user_profiles as permissive for update to authenticated
   using ((auth.uid() = user_id));
 
-create policy "Anyone can send a contact message" on public.contact_messages as permissive for insert to public
-  with check (true);
+-- Les messages arrivent par la fonction send-contact-message (plus d'insertion directe)
+create policy "Admins can delete contact messages" on public.contact_messages as permissive for delete to authenticated
+  using ((select public.is_admin()));
 create policy "Admins can view contact messages" on public.contact_messages as permissive for select to authenticated
   using ((EXISTS ( SELECT 1 FROM user_profiles WHERE ((user_profiles.user_id = auth.uid()) AND (user_profiles.is_admin = true)))));
 
 -- ─── Stockage : buckets et politiques ────────────────────────────────────────
 
-insert into storage.buckets (id, name, public) values ('reservation-documents', 'reservation-documents', false) on conflict (id) do nothing;
-insert into storage.buckets (id, name, public) values ('vehicle-images', 'vehicle-images', true) on conflict (id) do nothing;
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types) values
+  ('reservation-documents', 'reservation-documents', false, 10485760, array['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif', 'application/pdf']),
+  ('vehicle-images', 'vehicle-images', true, 5242880, array['image/jpeg', 'image/png', 'image/webp', 'image/avif'])
+on conflict (id) do nothing;
 
 create policy "Anyone can upload reservation documents" on storage.objects as permissive for insert to public
   with check ((bucket_id = 'reservation-documents'::text));

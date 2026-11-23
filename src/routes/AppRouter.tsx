@@ -15,6 +15,7 @@ const AdminLayout = lazy(() => import('../components/layout/AdminLayout'))
 const AdminVehiclesPage = lazy(() => import('../pages/admin/AdminVehiclesPage'))
 const AdminReservationsPage = lazy(() => import('../pages/admin/AdminReservationsPage'))
 const AdminPromotionsPage = lazy(() => import('../pages/admin/AdminPromotionsPage'))
+const AdminMessagesPage = lazy(() => import('../pages/admin/AdminMessagesPage'))
 
 const loading = <p className="p-12 text-center text-sm text-muted-foreground">Chargement...</p>
 
@@ -39,6 +40,7 @@ export default function AppRouter() {
           <Route path="vehicules" element={<AdminVehiclesPage />} />
           <Route path="reservations" element={<AdminReservationsPage />} />
           <Route path="promotions" element={<AdminPromotionsPage />} />
+          <Route path="messages" element={<AdminMessagesPage />} />
         </Route>
       </Route>
     </Routes>

@@ -39,6 +39,7 @@ export default function ContactPage() {
         vehicleId: selectedVehicle || null,
         duration: formData.get('duration') as string,
         message: formData.get('message') as string,
+        website: formData.get('website') as string,
       })
       setSent(true)
     } catch (err) {
@@ -79,6 +80,8 @@ export default function ContactPage() {
               onSubmit={handleSubmit}
               className="grid gap-3 rounded-xl border border-border bg-card p-6 sm:grid-cols-2"
             >
+              {/* Champ piège invisible : seuls les robots le remplissent */}
+              <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
               <Input required name="name" placeholder="Nom et prénom" />
               <Input required name="phone" type="tel" placeholder="Téléphone" />
               <Input required name="email" type="email" placeholder="E-mail" className="sm:col-span-2" />
