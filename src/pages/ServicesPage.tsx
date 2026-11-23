@@ -20,9 +20,9 @@ export default function ServicesPage() {
     <div className="bg-background text-foreground">
       <section className="mx-auto max-w-6xl px-6 py-14 md:px-12">
         <h1 className="text-3xl text-black font-bold uppercase tracking-wide sm:text-4xl">
-          Tarifs & <span className="text-primary">Services</span>
+          Tarifs & <span className="text-[#4A5E00]">Services</span>
         </h1>
-        <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+        <p className="mt-3 max-w-2xl text-sm text-[#4A4C50]">
           Prix tout compris par durée, caution bloquée (jamais débitée si le véhicule revient intact).
         </p>
 
@@ -117,7 +117,7 @@ export default function ServicesPage() {
           </Link>
           <Link
             to="/contact"
-            className="rounded-md border border-border px-6 py-3 text-sm font-bold uppercase tracking-widest transition-colors hover:border-primary"
+            className="rounded-md border border-[#17181A]/40 px-6 py-3 text-sm font-bold uppercase tracking-widest text-[#17181A] transition-colors hover:border-[#17181A]"
           >
             Demander un devis
           </Link>

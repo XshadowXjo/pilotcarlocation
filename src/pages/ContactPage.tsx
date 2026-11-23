@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { useVehicles } from '../hooks/useVehicles'
 import { sendContactMessage } from '../services/supabase/contact'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 const socialLinks = [
@@ -53,9 +54,9 @@ export default function ContactPage() {
     <div className="bg-background text-foreground">
       <section className="mx-auto max-w-5xl px-6 py-14 md:px-12">
         <h1 className="text-3xl font-bold uppercase text-black tracking-wide sm:text-4xl">
-          Nous <span className="text-primary">contacter</span>
+          Nous <span className="text-[#4A5E00]">contacter</span>
         </h1>
-        <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+        <p className="mt-3 max-w-2xl text-sm text-[#4A4C50]">
           {longue
             ? "Location de plus d'une semaine : décrivez votre besoin, nous vous envoyons un tarif dégressif sur mesure sous 2 heures ouvrées."
             : 'Une question sur un véhicule, une caution ou une longue durée ? Nous répondons sous 2 heures ouvrées.'}
@@ -82,34 +83,54 @@ export default function ContactPage() {
             >
               {/* Champ piège invisible : seuls les robots le remplissent */}
               <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
-              <Input required name="name" placeholder="Nom et prénom" />
-              <Input required name="phone" type="tel" placeholder="Téléphone" />
-              <Input required name="email" type="email" placeholder="E-mail" className="sm:col-span-2" />
+              <div>
+                <Label htmlFor="contact-name" className="mb-1.5 block text-xs font-medium text-muted-foreground">Nom et prénom <span className="text-primary">*</span></Label>
+                <Input id="contact-name" required name="name" autoComplete="name" placeholder="Ex : Alassane Diallo" />
+              </div>
+              <div>
+                <Label htmlFor="contact-phone" className="mb-1.5 block text-xs font-medium text-muted-foreground">Téléphone <span className="text-primary">*</span></Label>
+                <Input id="contact-phone" required name="phone" type="tel" autoComplete="tel" placeholder="06 12 34 56 78" />
+              </div>
+              <div className="sm:col-span-2">
+                <Label htmlFor="contact-email" className="mb-1.5 block text-xs font-medium text-muted-foreground">E-mail <span className="text-primary">*</span></Label>
+                <Input id="contact-email" required name="email" type="email" autoComplete="email" placeholder="vous@exemple.com" />
+              </div>
 
-              <Select value={selectedVehicle} onValueChange={setSelectedVehicle}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Véhicule souhaité" />
-                </SelectTrigger>
-                <SelectContent>
-                  {vehicles.map((v) => (
-                    <SelectItem key={v.id} value={v.id}>{v.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div>
+                <Label htmlFor="contact-vehicle" className="mb-1.5 block text-xs font-medium text-muted-foreground">Véhicule souhaité</Label>
+                <Select value={selectedVehicle} onValueChange={setSelectedVehicle}>
+                  <SelectTrigger id="contact-vehicle" className="w-full">
+                    <SelectValue placeholder="Indifférent" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {vehicles.map((v) => (
+                      <SelectItem key={v.id} value={v.id}>{v.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-              <Input
-                name="duration"
-                placeholder="Durée souhaitée (ex : 3 semaines)"
-                defaultValue={longue ? "Plus d'une semaine" : ''}
-              />
+              <div>
+                <Label htmlFor="contact-duration" className="mb-1.5 block text-xs font-medium text-muted-foreground">Durée souhaitée</Label>
+                <Input
+                  id="contact-duration"
+                  name="duration"
+                  placeholder="Ex : 3 semaines"
+                  defaultValue={longue ? "Plus d'une semaine" : ''}
+                />
+              </div>
 
-              <textarea
-                required
-                name="message"
-                rows={5}
-                placeholder="Votre message"
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition-colors focus:border-primary sm:col-span-2"
-              />
+              <div className="sm:col-span-2">
+                <Label htmlFor="contact-message" className="mb-1.5 block text-xs font-medium text-muted-foreground">Votre message <span className="text-primary">*</span></Label>
+                <textarea
+                  id="contact-message"
+                  required
+                  name="message"
+                  rows={5}
+                  placeholder="Dites-nous ce dont vous avez besoin"
+                  className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
+                />
+              </div>
 
               {submitError && (
                 <p className="text-xs text-destructive sm:col-span-2">{submitError}</p>

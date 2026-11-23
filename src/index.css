@@ -50,7 +50,11 @@ body {
   color: #17181A;
 }
 .nav-link.active {
-  color: #B8F000;
+  color: #17181A;
+  text-decoration: underline;
+  text-decoration-color: #9ACB00;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 6px;
 }
 
 .btn-cta {
@@ -267,6 +271,12 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+  /* Focus clavier visible partout : anneau sombre + halo vert, lisible sur fond clair comme sombre */
+  :focus-visible {
+    outline: 2px solid #17181A;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px #D6FF3F;
   }
   html {
     @apply font-sans;

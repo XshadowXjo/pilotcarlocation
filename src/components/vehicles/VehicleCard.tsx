@@ -44,7 +44,7 @@ export default function VehicleCard({ vehicle, promotions }: VehicleCardProps) {
         )}
         {vehicle.featured && (
           <span className="absolute bottom-2.5 right-2.5 rounded bg-accent px-2 py-1 text-[8px] font-extrabold uppercase tracking-wider text-accent-foreground">
-            Featured
+            Coup de cœur
           </span>
         )}
         {bestPromo && (

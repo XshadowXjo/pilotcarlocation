@@ -9,6 +9,7 @@ export default function Hero() {
   return (
     <section className="relative isolate min-h-[480px] overflow-hidden sm:min-h-[560px] md:min-h-[calc(100vh-5rem)]">      <img
         src="/images/pce_wallpaper.webp"
+        alt=""
         className="absolute inset-0 h-full w-full object-cover"
       />
       <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/20" />

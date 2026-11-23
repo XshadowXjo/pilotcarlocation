@@ -18,8 +18,8 @@ export default function AccountPage() {
     return (
       <div className="bg-background text-foreground">
         <div className="mx-auto max-w-xl px-6 py-20 text-center">
-          <h1 className="text-2xl font-bold uppercase tracking-wide">Mon compte</h1>
-          <p className="mt-3 text-sm text-muted-foreground">
+          <h1 className="text-2xl font-bold uppercase tracking-wide text-[#17181A]">Mon compte</h1>
+          <p className="mt-3 text-sm text-[#4A4C50]">
             Connectez-vous pour retrouver vos réservations.
           </p>
           <Button className="mt-6" onClick={() => setModalOpen(true)}>Se connecter</Button>
@@ -140,18 +140,18 @@ function AccountDashboard() {
       <div className="mx-auto max-w-3xl px-6 py-14 md:px-12">
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold uppercase tracking-wide">Mon compte</h1>
-            <p className="mt-1 text-sm text-muted-foreground">{user!.email}</p>
+            <h1 className="text-2xl font-bold uppercase tracking-wide text-[#17181A]">Mon compte</h1>
+            <p className="mt-1 text-sm text-[#4A4C50]">{user!.email}</p>
           </div>
           <Button variant="outline" onClick={() => signOut()}>Se déconnecter</Button>
         </div>
 
-        <h2 className="mb-4 text-lg font-semibold">Mes réservations</h2>
+        <h2 className="mb-4 text-lg font-semibold text-[#17181A]">Mes réservations</h2>
 
-        {isLoading && <p className="text-sm text-muted-foreground">Chargement...</p>}
+        {isLoading && <p className="text-sm text-[#4A4C50]">Chargement...</p>}
         {error && <p className="text-sm text-destructive">{error}</p>}
         {!isLoading && !error && reservations.length === 0 && (
-          <p className="text-sm text-muted-foreground">Aucune réservation pour le moment.</p>
+          <p className="text-sm text-[#4A4C50]">Aucune réservation pour le moment.</p>
         )}
 
         <ul className="space-y-3">

@@ -56,9 +56,9 @@ export default function DateLocationForm({ vehicleId }: DateLocationFormProps) {
       </h2>
 
       <div className="mb-5">
-        <Label className="mb-1.5 block text-xs font-medium text-muted-foreground">Lieu de retrait <span className="text-primary">*</span></Label>
+        <Label htmlFor="res-pickup" className="mb-1.5 block text-xs font-medium text-muted-foreground">Lieu de retrait <span className="text-primary">*</span></Label>
         <Select value={form.pickupLocation} onValueChange={(value) => updateField('pickupLocation', value)}>
-          <SelectTrigger className="w-full sm:w-72">
+          <SelectTrigger id="res-pickup" className="w-full sm:w-72">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -71,9 +71,11 @@ export default function DateLocationForm({ vehicleId }: DateLocationFormProps) {
 
       {form.pickupLocation === 'livraison' && (
         <div className="mb-5">
-          <Label className="mb-1.5 block text-xs font-medium text-muted-foreground">Adresse de livraison</Label>
+          <Label htmlFor="res-delivery" className="mb-1.5 block text-xs font-medium text-muted-foreground">Adresse de livraison</Label>
           <div className="flex gap-2">
             <Input
+              id="res-delivery"
+              autoComplete="street-address"
               value={form.deliveryAddress}
               onChange={(e) => { updateField('deliveryAddress', e.target.value); updateField('deliveryPrice', null) }}
               placeholder="N°, rue, ville, code postal"
@@ -95,7 +97,7 @@ export default function DateLocationForm({ vehicleId }: DateLocationFormProps) {
         <Label className="mb-1.5 block text-xs font-medium text-muted-foreground">
           Dates de location <span className="text-primary">*</span>
         </Label>
-        <div className="rounded-lg border border-border bg-background p-3">
+        <div className="rounded-lg border border-border bg-[#141414] p-3">
           <Calendar
             mode="range"
             selected={selectedRange}

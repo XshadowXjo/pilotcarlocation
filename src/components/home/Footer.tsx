@@ -25,7 +25,7 @@ export default function Footer() {
           <Link
             key={link.to}
             to={link.to}
-            className="text-[10px] font-bold uppercase tracking-wider text-[#4A4C50] transition-colors hover:text-[#17181A]"
+            className="inline-block py-1.5 text-[10px] font-bold uppercase tracking-wider text-[#4A4C50] transition-colors hover:text-[#17181A]"
           >
             {link.label}
           </Link>

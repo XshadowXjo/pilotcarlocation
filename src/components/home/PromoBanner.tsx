@@ -3,7 +3,7 @@ export default function PromoBanner() {
     <div className="px-6 md:px-[90px]">
       <div className="flex flex-col items-start gap-6 rounded-xl bg-[#101113] px-6 py-8 md:flex-row md:items-center md:justify-between md:px-11 md:py-[30px]">
         <div>
-          <div className="mb-2.5 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#5A5C62]">
+          <div className="mb-2.5 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#9A9B9E]">
             Offre limitée
           </div>
           <div className="mb-2.5 text-2xl font-black uppercase leading-tight tracking-tight text-white sm:text-[30px]">
